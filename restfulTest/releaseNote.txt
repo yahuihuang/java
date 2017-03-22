@@ -1,0 +1,74 @@
+¤@¡BrestfulTest Project
+  1.create table and stored procedure in mysql database
+    1) DB/1.cr_table.sql
+    2) DB/2.cr_SP.sql
+	
+  2.maven command for pom.xml
+  
+  3.change config
+    1) src/sysConfig.xml : modify pwd.deskey value , the value you can edit for your prefer
+    <entry key="pwd.deskey">XXXXXX</entry>
+    2) WebContent/WEB-INF/applicationContext_WA.xml
+    a.change mysql db connection
+    <property name="jdbcUrl" value="jdbc:mysql://XXX.XX.XX.XX:3306/XXXXXX?characterEncoding=utf-8&amp;autoReconnect=true" />
+    b.change mysql db user and password,
+      the password should be encrypt, you can edit WebContent/DesTest.jsp sIn variable, 
+      and get output string , then put in password property.
+    <bean id="dataSourceProperties" class="info.codingfun.restful.util.PropertiesEncryptFactoryBean">  
+        <property name="properties">  
+            <props>  
+                <prop key="user">XXXXXXX</prop>  
+                <prop key="password">XXXXXXX</prop>  
+            </props>  
+        </property>  
+    </bean>
+	
+  4.insert some data in mysql table : WABlog
+  
+  5.test
+  1) http://127.0.0.1:8080/restfulTest/services/blogservice/getpost/1
+     http://127.0.0.1:8080/restfulTest/services/blogservice/getpost/1.xml
+  @GET Request: None
+  Content-Type: application/x-www-form-urlencoded
+  accept: application/json
+  
+  2) http://127.0.0.1:8080/restfulTest/services/blogservice/getallpost
+     http://127.0.0.1:8080/restfulTest/services/blogservice/getallpost.xml
+  @GET Request: None
+  Content-Type: application/x-www-form-urlencoded
+  accept: application/json
+  
+  3) http://127.0.0.1:8080/restfulTest/services/blogservice/addpost
+  @POST Request:
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BlogPostType xmlns="http://codingfun.info/restful/xsd">
+    <title>title-1</title>
+    <slogan>slogan-1</slogan>
+    <description>description-1</description>
+    <status>1</status>
+    <modifyEmp>grace</modifyEmp>
+</BlogPostType>
+  Content-Type: application/xml
+  accept: application/x-www-form-urlencoded
+
+  4) http://localhost:8080/restfulTest/services/blogservice/updatepost
+  @PUT Request:
+{
+  "blogId": 1,
+  "title": "title-2",
+  "slogan": "slogan-2",
+  "description": "description-2",
+  "status": 1,
+  "modifyTime": "2017-03-06T09:05:34.000+08:00",
+  "modifyEmp": "grace"
+}
+  Content-Type: application/json
+  accept: application/x-www-form-urlencoded
+  
+  5) http://localhost:8080/restfulTest/services/blogservice/deletepost
+  @DELETE Request:
+{
+  "blogId": 1
+}
+  Content-Type: application/json
+  accept: application/x-www-form-urlencoded
