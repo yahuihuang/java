@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+   <properties>
+  		<entry key="pwd.deskey">XXXXXX</entry>
+ 		<!-- for 弱掃 Host header attack -->
+		<entry key="Header_HOST.allow">127.0.0.1:8080,127.0.0.1,172.24.20.54,localhost</entry> <!-- Header HOST清單,以 , 區隔 -->
+   </properties>

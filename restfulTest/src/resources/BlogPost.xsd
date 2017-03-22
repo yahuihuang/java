@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://codingfun.info/restful/xsd" xmlns:tns="http://codingfun.info/restful/xsd"
+    elementFormDefault="qualified">
+ 
+    <!-- player object with four attributes -->
+    <xsd:element name="BlogPostType">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="blogId" type="xsd:int" />
+                <xsd:element name="title" type="xsd:string" />
+                <xsd:element name="slogan" type="xsd:string" />
+                <xsd:element name="description" type="xsd:string" />
+                <xsd:element name="status" type="xsd:int" />
+                <xsd:element name="modifyTime" type="xsd:dateTime" />
+                <xsd:element name="modifyEmp" type="xsd:string" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>    
+ 
+    <!-- an object to contain lists of players referencing above player object -->
+    <xsd:element name="BlogPostListType">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="tns:BlogPostType" minOccurs="0"
+                    maxOccurs="unbounded" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

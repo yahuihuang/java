@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xsi:schemaLocation="
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/tx
+			http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+			http://www.springframework.org/schema/aop
+			http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+		default-lazy-init="true">
+		
+	<!-- to activate annotations in beans already registered in the application
+        context -->
+    <context:annotation-config />
+ 
+    <!-- scans packages to find and register beans within the application context -->
+    <context:component-scan base-package="info.codingfun.restful.service" />
+    
+ 	<bean id="dataSource_privadm" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">  
+        <property name="driverClass">  
+            <value>com.mysql.jdbc.Driver</value>  
+        </property>  
+        <property name="jdbcUrl" value="jdbc:mysql://XXX.XX.XX.XX:3306/XXXXXX?characterEncoding=utf-8&amp;autoReconnect=true" />
+        <property name="acquireIncrement" value="1"/> <!-- default:3 -->
+        <property name="idleConnectionTestPeriod" value="60"/>  
+        <property name="maxPoolSize" value="10"/>  
+        <property name="minPoolSize" value="2"/>  
+        <property name="initialPoolSize" value="2" />  
+        <property name="numHelperThreads" value="2"/>  
+        <property name="maxIdleTime" value="60" />  
+        <property name="acquireRetryAttempts" value="3"/> <!-- default:30 -->
+        <property name="preferredTestQuery" value=" select 1 from dual "/>
+        <property name="testConnectionOnCheckout" value="true"/>
+        <property name="testConnectionOnCheckin" value="true"/> 
+        <property name="maxConnectionAge" value="180" />
+        <property name="privilegeSpawnedThreads" value="true" />
+		<property name="contextClassLoaderSource" value="library" />
+        <property name="properties" ref="dataSourceProperties"/>               
+    </bean>  
+
+	<bean id="dataSourceProperties" class="info.codingfun.restful.util.PropertiesEncryptFactoryBean">  
+        <property name="properties">  
+            <props>  
+                <prop key="user">XXXXXXX</prop>  
+                <prop key="password">XXXXXXX</prop>  
+            </props>  
+        </property>  
+    </bean>
+    
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" scope="singleton">
+   		<property name="dataSource" ref="dataSource_privadm" />
+   		<property name="packagesToScan">
+	        <list>
+	            <!-- <value>annotations</value> -->
+	            <value>info.codingfun.restful.beanwa</value>
+	        </list>
+    	</property>
+    	<property name="hibernateProperties">
+        	<props>
+            	<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            	<prop key="hibernate.show_sql">false</prop>
+            	<prop key="hibernate.current_session_context_class">thread</prop>
+            	<prop key="hibernate.use_outer_join">true</prop>
+            	<prop key="hibernate.format_sql">false</prop>
+            	<prop key="hibernate.autoReconnect">true</prop>
+                <prop key="hibernate.connection.useUnicode">true</prop>
+                <prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+                <prop key="hibernate.connection.charSet">UTF-8</prop>
+                <!-- for 隔日出現com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: The last packet successfully received from the server was 244,469,079 milliseconds ago.  The last packet sent successfully to the server was 244,469,081 milliseconds ago. is longer than the server configured value of 'wait_timeout'. You should consider either expiring and/or testing connection validity before use in your application, increasing the server configured values for client timeouts, or using the Connector/J connection property 'autoReconnect=true' to avoid this problem. -->
+        		<prop key="hibernate.connection.autoReconnect">true</prop>
+    			<prop key="hibernate.connection.autoReconnectForPools">true</prop>
+    			<prop key="hibernate.connection.is-connection-validation-required">true</prop>
+		 		<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+                <prop key="hibernate.auto_close_sessions">true</prop>	
+        	</props>
+    	</property>
+	</bean>
+	
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<tx:annotation-driven />
+	
+ 	<bean id="WAServiceDao" class="info.codingfun.restful.transactional.WAServiceImpl" 
+ 		scope="singleton">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>	
+</beans>

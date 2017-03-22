@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+ 
+    <display-name>Restful Test</display-name>
+    
+ 	<!-- Spring -->
+  	<listener> <!-- Required for the struts2 spring plugin to work -->
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  	</listener>
+  	
+  	<!-- 發起一個頁面請求時打開Hibernate的Session，一直保持這個Session，直到這個請求結束，
+    	具體是通過一個Filter來實現的 -->
+  	<filter> 
+		<filter-name>openSessionInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
+  	</filter>
+  	<filter-mapping>
+		<filter-name>openSessionInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+  	</filter-mapping> 
+  	  	
+  	<filter>
+		<filter-name>Set_Character_Encoding</filter-name>
+		<filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>Set_Character_Encoding</filter-name>
+		<!--將全部的請求都mapping給filter-->
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- for Filter -->
+ 	<filter>
+		<filter-name>Filter</filter-name>
+		<filter-class>info.codingfun.restful.servlet.FilterServlet</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+  	<!-- Init -->
+  	<servlet>
+		<servlet-name>InitWebAppServlet</servlet-name>
+        <servlet-class>info.codingfun.restful.servlet.InitWebAppServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+		<init-param>
+            <param-name>configlist</param-name>
+            <param-value>sysConfig</param-value>
+        </init-param>        
+     </servlet>
+ 
+     <servlet-mapping>
+          <servlet-name>InitWebAppServlet</servlet-name>
+          <url-pattern>/servlet/InitWebAppServlet</url-pattern>
+     </servlet-mapping>
+     
+    <!-- Apache CXF -->
+    <servlet>
+        <servlet-name>CXFServlet</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CXFServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+ 
+    <!-- web context param -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            WEB-INF/apache-cxf-services.xml,
+            WEB-INF/applicationContext_WA.xml
+        </param-value>
+    </context-param>
+ 
+    <!-- welcome file list -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    
+    <!-- for 弱掃 GHDB: Apache Tomcat Error message -->
+    <error-page>
+        <location>/ErrorPage.html</location>
+    </error-page>
+    
+    <session-config>
+		<session-timeout>30</session-timeout>
+		<!-- for 弱掃 Cookie(s) without Secure flag set --> 
+		<cookie-config>
+		  	<!-- <secure>true</secure> -->
+		  	<http-only>true</http-only>
+		</cookie-config>
+		<!-- for 弱掃 Session token in URL --> 
+		<tracking-mode>COOKIE</tracking-mode>
+  	</session-config>
+  	
+  		<!-- for 弱掃 OPTIONS method is enabled -->
+  	<security-constraint>
+    	<web-resource-collection>
+        	<url-pattern>/*</url-pattern>
+        	<http-method>GET</http-method>
+        	<http-method>POST</http-method>
+        	<http-method>PUT</http-method>
+        	<http-method>DELETE</http-method>
+    	</web-resource-collection>
+    	<!-- no auth-constraint tag here -->
+	</security-constraint>
+</web-app>
